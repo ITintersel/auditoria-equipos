@@ -24,10 +24,8 @@
   .hero h1 { font-size: 28px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 8px; }
   .hero p { color: var(--muted); font-size: 15px; line-height: 1.6; }
   #login-section, #config-section { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 32px; margin-top: 0; margin-bottom: 24px; }
-  #config-section { border-color: rgba(251,191,36,0.4); }
-  #login-section h2, #config-section h2 { font-size: 18px; font-weight: 600; margin-bottom: 6px; }
-  #config-section h2 { color: var(--warning); }
-  #login-section p, #config-section p { color: var(--muted); font-size: 14px; margin-bottom: 24px; line-height: 1.6; }
+  #login-section h2 { font-size: 18px; font-weight: 600; margin-bottom: 6px; }
+  #login-section p { color: var(--muted); font-size: 14px; margin-bottom: 24px; line-height: 1.6; }
   .field { margin-bottom: 16px; }
   label { display: block; font-size: 13px; font-weight: 500; color: var(--muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
   input[type="email"], input[type="password"], input[type="text"] { width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; color: var(--text); font-size: 15px; font-family: inherit; outline: none; transition: border-color 0.2s; }
@@ -91,24 +89,10 @@
     <p>Inicia sesión con tu correo corporativo para ver tus equipos asignados y subir las fotografías requeridas.</p>
   </div>
 
-  <!-- Config section -->
-  <div id="config-section">
-    <h2>⚙️ Configuración inicial (solo administrador)</h2>
-    <p>Ingresa las credenciales de administrador de Odoo para conectar el formulario. Se guardan solo en tu navegador.</p>
-    <div class="field">
-      <label>Usuario administrador (correo)</label>
-      <input type="email" id="admin-user-input" placeholder="admin@empresa.com" value="jesus.moreno@intersel.com.mx">
-    </div>
-    <div class="field">
-      <label>Contraseña de Odoo</label>
-      <input type="password" id="admin-pass-input" placeholder="Tu contraseña de Odoo...">
-    </div>
-    <div id="config-alert" class="alert alert-error"></div>
-    <button class="btn" id="config-btn" onclick="saveConfig()">Guardar y conectar</button>
-  </div>
+
 
   <!-- Login -->
-  <div id="login-section" class="hidden">
+  <div id="login-section">
     <h2>Iniciar sesión</h2>
     <p>Usa tu correo corporativo para identificarte y ver tus equipos.</p>
     <div id="login-alert" class="alert alert-error"></div>
@@ -144,7 +128,7 @@
 const ODOO_URL = "https://odoo-proxy.jesus-moreno.workers.dev";
 const DB = "sociosenred-intersel-main-28167468";
 
-let SESSION_ID = localStorage.getItem('odoo_session') || '';
+
 let currentEmployee = null;
 let equipmentData = [];
 
@@ -162,68 +146,15 @@ function getIcon(name) {
   return '📦';
 }
 
-window.addEventListener('load', () => {
-  if (SESSION_ID) {
-    document.getElementById('config-section').classList.add('hidden');
-    document.getElementById('login-section').classList.remove('hidden');
-  }
-});
 
-// ─── CONFIG / AUTHENTICATE ADMIN ─────────────────────
-async function saveConfig() {
-  const user = document.getElementById('admin-user-input').value.trim();
-  const pass = document.getElementById('admin-pass-input').value.trim();
-  if (!user || !pass) return showAlert('config-alert', 'Por favor completa usuario y contraseña.', 'error');
 
-  const btn = document.getElementById('config-btn');
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span> Conectando...';
-
-  try {
-    const res = await fetch(`${ODOO_URL}/web/session/authenticate`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        jsonrpc: '2.0', method: 'call', id: 1,
-        params: { db: DB, login: user, password: pass }
-      }),
-      credentials: 'include'
-    });
-
-    const data = await res.json();
-    if (data.error) throw new Error(data.error.data?.message || data.error.message);
-    if (!data.result?.uid) throw new Error('Credenciales incorrectas.');
-
-    // Save session cookie value
-    SESSION_ID = data.result.session_id || 'active';
-    localStorage.setItem('odoo_session', SESSION_ID);
-    localStorage.setItem('odoo_admin_user', user);
-    localStorage.setItem('odoo_admin_pass', btoa(pass));
-
-    document.getElementById('config-section').classList.add('hidden');
-    document.getElementById('login-section').classList.remove('hidden');
-
-  } catch(e) {
-    showAlert('config-alert', 'Error: ' + e.message, 'error');
-  } finally {
-    btn.disabled = false;
-    btn.innerHTML = 'Guardar y conectar';
-  }
-}
+// ─── CONFIG removed - credentials stored in Worker ─────
 
 // ─── ODOO RPC ─────────────────────────────────────────
 async function odooCall(model, method, args, kwargs = {}) {
-  const user = localStorage.getItem('odoo_admin_user');
-  const pass = atob(localStorage.getItem('odoo_admin_pass') || btoa(''));
-
   const res = await fetch(`${ODOO_URL}/web/dataset/call_kw/${model}/${method}`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-Odoo-Db': DB,
-      'X-Odoo-Login': user,
-      'X-Odoo-Password': pass,
-    },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       jsonrpc: '2.0', method: 'call', id: Math.floor(Math.random()*9999),
       params: { model, method, args, kwargs: { ...kwargs, context: {} } }
