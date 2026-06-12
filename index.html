@@ -369,7 +369,7 @@ async function uploadPhoto(eqId) {
 
   try {
     const base64 = await fileToBase64(fileInput.files[0]);
-    await odooCall('maintenance.equipment', 'write', [[eqId], { image_1920: base64 }], {});
+    await odooCall('maintenance.equipment', 'write', [[eqId], { x_studio_imagen_equipo_mobiliario: base64 }], {});
 
     showCardAlert(eqId, '✅ Foto guardada correctamente.', 'success');
     const eq = equipmentData.find(e => e.id === eqId);
