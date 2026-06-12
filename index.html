@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Auditoría de Equipo — Intersel</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #22263a;
+    --border: #2e3250;
+    --accent: #6c63ff;
+    --accent2: #a78bfa;
+    --text: #e8eaf6;
+    --muted: #8892b0;
+    --success: #34d399;
+    --error: #f87171;
+    --warning: #fbbf24;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 18px 32px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  .logo {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--accent2);
+    letter-spacing: -0.5px;
+  }
+
+  .logo span { color: var(--text); }
+
+  header p {
+    font-size: 13px;
+    color: var(--muted);
+    margin-left: auto;
+  }
+
+  .container {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+  }
+
+  .hero {
+    margin-bottom: 40px;
+  }
+
+  .hero h1 {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    margin-bottom: 8px;
+  }
+
+  .hero p {
+    color: var(--muted);
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  /* Login */
+  #login-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px;
+    margin-top: 32px;
+  }
+
+  #login-section h2 {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+
+  #login-section p {
+    color: var(--muted);
+    font-size: 14px;
+    margin-bottom: 24px;
+  }
+
+  .field {
+    margin-bottom: 16px;
+  }
+
+  label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--muted);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  input[type="email"], input[type="password"], input[type="text"] {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 14px;
+    color: var(--text);
+    font-size: 15px;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  input:focus { border-color: var(--accent); }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 24px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.1s;
+    font-family: inherit;
+  }
+
+  .btn:hover { opacity: 0.9; transform: translateY(-1px); }
+  .btn:active { transform: translateY(0); }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+  .btn-outline {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text);
+  }
+
+  .btn-success {
+    background: var(--success);
+    color: #0f1117;
+  }
+
+  /* Alert */
+  .alert {
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 14px;
+    margin-bottom: 16px;
+    display: none;
+  }
+
+  .alert.show { display: block; }
+  .alert-error { background: rgba(248,113,113,0.1); border: 1px solid rgba(248,113,113,0.3); color: var(--error); }
+  .alert-success { background: rgba(52,211,153,0.1); border: 1px solid rgba(52,211,153,0.3); color: var(--success); }
+  .alert-info { background: rgba(108,99,255,0.1); border: 1px solid rgba(108,99,255,0.3); color: var(--accent2); }
+
+  /* Employee info */
+  #employee-info {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin-bottom: 32px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .employee-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    font-weight: 700;
+    flex-shrink: 0;
+    overflow: hidden;
+  }
+
+  .employee-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+  .employee-details h3 { font-size: 16px; font-weight: 600; }
+  .employee-details p { font-size: 13px; color: var(--muted); margin-top: 2px; }
+
+  .badge {
+    margin-left: auto;
+    background: rgba(52,211,153,0.15);
+    color: var(--success);
+    border: 1px solid rgba(52,211,153,0.3);
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  /* Equipment cards */
+  .section-title {
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--muted);
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .equipment-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px;
+    margin-bottom: 16px;
+    transition: border-color 0.2s;
+  }
+
+  .equipment-card.uploaded {
+    border-color: var(--success);
+  }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .category-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: rgba(108,99,255,0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+
+  .card-header-text h3 {
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  .card-header-text p {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  .status-badge {
+    margin-left: auto;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 20px;
+  }
+
+  .status-pending {
+    background: rgba(251,191,36,0.1);
+    color: var(--warning);
+    border: 1px solid rgba(251,191,36,0.3);
+  }
+
+  .status-done {
+    background: rgba(52,211,153,0.1);
+    color: var(--success);
+    border: 1px solid rgba(52,211,153,0.3);
+  }
+
+  /* Upload area */
+  .upload-area {
+    border: 2px dashed var(--border);
+    border-radius: 10px;
+    padding: 28px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    position: relative;
+  }
+
+  .upload-area:hover {
+    border-color: var(--accent);
+    background: rgba(108,99,255,0.05);
+  }
+
+  .upload-area.has-file {
+    border-color: var(--success);
+    background: rgba(52,211,153,0.05);
+  }
+
+  .upload-area input[type="file"] {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+  }
+
+  .upload-icon { font-size: 32px; margin-bottom: 8px; }
+
+  .upload-area p {
+    font-size: 14px;
+    color: var(--muted);
+  }
+
+  .upload-area .file-name {
+    font-size: 13px;
+    color: var(--success);
+    font-weight: 500;
+    margin-top: 6px;
+  }
+
+  .preview-img {
+    width: 100%;
+    max-height: 200px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-top: 12px;
+    display: none;
+  }
+
+  .card-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 16px;
+  }
+
+  /* Empty state */
+  .empty-state {
+    text-align: center;
+    padding: 60px 24px;
+    color: var(--muted);
+  }
+
+  .empty-state .icon { font-size: 48px; margin-bottom: 16px; }
+  .empty-state h3 { font-size: 18px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
+
+  /* Progress */
+  .progress-bar-wrap {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-bottom: 28px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .progress-track {
+    flex: 1;
+    height: 6px;
+    background: var(--border);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 99px;
+    transition: width 0.4s ease;
+    width: 0%;
+  }
+
+  .progress-label {
+    font-size: 13px;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  .progress-count {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--accent2);
+    white-space: nowrap;
+  }
+
+  /* Loading spinner */
+  .spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    display: inline-block;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Config banner */
+  #config-banner {
+    background: rgba(251,191,36,0.1);
+    border: 1px solid rgba(251,191,36,0.3);
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-bottom: 24px;
+    font-size: 14px;
+    color: var(--warning);
+    display: none;
+  }
+
+  #config-banner.show { display: block; }
+  #config-banner strong { display: block; margin-bottom: 4px; }
+
+  .hidden { display: none !important; }
+
+  /* Config section */
+  #config-section {
+    background: var(--surface);
+    border: 1px solid rgba(251,191,36,0.4);
+    border-radius: 16px;
+    padding: 28px;
+    margin-bottom: 32px;
+  }
+
+  #config-section h2 {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--warning);
+    margin-bottom: 6px;
+  }
+
+  #config-section p {
+    color: var(--muted);
+    font-size: 14px;
+    margin-bottom: 20px;
+    line-height: 1.6;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">inter<span>sel</span></div>
+  <p>Sistema de Auditoría de Equipos</p>
+</header>
+
+<div class="container">
+
+  <div class="hero">
+    <h1>Auditoría de Equipo Asignado</h1>
+    <p>Inicia sesión con tu correo corporativo para ver tus equipos asignados y subir las fotografías requeridas.</p>
+  </div>
+
+  <!-- Config section (shown when API key not set) -->
+  <div id="config-section">
+    <h2>⚙️ Configuración inicial (solo administrador)</h2>
+    <p>Ingresa tu API Key de Odoo para conectar el formulario. Esta clave se guarda solo en tu navegador y nunca se comparte.</p>
+    <div class="field">
+      <label>API Key de Odoo</label>
+      <input type="password" id="api-key-input" placeholder="Pega aquí tu API Key...">
+    </div>
+    <div class="field">
+      <label>Usuario administrador (correo)</label>
+      <input type="email" id="admin-user-input" value="jesus.moreno@intersel.com.mx">
+    </div>
+    <button class="btn" onclick="saveConfig()">Guardar configuración</button>
+  </div>
+
+  <!-- Login -->
+  <div id="login-section">
+    <h2>Iniciar sesión</h2>
+    <p>Usa tu correo corporativo para identificarte y ver tus equipos.</p>
+    <div id="login-alert" class="alert alert-error"></div>
+    <div class="field">
+      <label>Correo corporativo</label>
+      <input type="email" id="login-email" placeholder="tu.nombre@intersel.com.mx">
+    </div>
+    <button class="btn" id="login-btn" onclick="login()">
+      Continuar
+    </button>
+  </div>
+
+  <!-- Main content -->
+  <div id="main-content" class="hidden">
+
+    <div id="employee-info">
+      <div class="employee-avatar" id="emp-avatar">?</div>
+      <div class="employee-details">
+        <h3 id="emp-name">—</h3>
+        <p id="emp-job">—</p>
+      </div>
+      <span class="badge">✓ Identificado</span>
+    </div>
+
+    <div class="progress-bar-wrap" id="progress-wrap">
+      <div class="progress-track">
+        <div class="progress-fill" id="progress-fill"></div>
+      </div>
+      <span class="progress-label">Fotos subidas</span>
+      <span class="progress-count" id="progress-count">0 / 0</span>
+    </div>
+
+    <div id="global-alert" class="alert"></div>
+
+    <p class="section-title">Equipos asignados</p>
+    <div id="equipment-list"></div>
+
+  </div>
+
+</div>
+
+<script>
+// ─── CONFIG ───────────────────────────────────────────
+const ODOO_URL = "https://intersel.odoo.com";
+const DB = "intersel";
+
+let API_KEY = localStorage.getItem('odoo_api_key') || '';
+let ADMIN_USER = localStorage.getItem('odoo_admin_user') || 'jesus.moreno@intersel.com.mx';
+let currentEmployee = null;
+let equipmentData = [];
+
+const CATEGORY_ICONS = {
+  'Laptop / Desktop': '💻',
+  'Monitor': '🖥️',
+  'Telefono Movil': '📱',
+  'Teléfono Móvil': '📱',
+  'Accesorios': '🖱️',
+  'Impresora / Scanner': '🖨️',
+  'Mobiliario': '🪑',
+};
+
+function getIcon(name) {
+  for (const [k, v] of Object.entries(CATEGORY_ICONS)) {
+    if (name.toLowerCase().includes(k.toLowerCase().split('/')[0].trim().toLowerCase())) return v;
+  }
+  return '📦';
+}
+
+// ─── INIT ─────────────────────────────────────────────
+window.addEventListener('load', () => {
+  if (API_KEY) {
+    document.getElementById('config-section').style.display = 'none';
+    document.getElementById('api-key-input').value = API_KEY;
+  }
+  document.getElementById('admin-user-input').value = ADMIN_USER;
+});
+
+function saveConfig() {
+  const key = document.getElementById('api-key-input').value.trim();
+  const user = document.getElementById('admin-user-input').value.trim();
+  if (!key) return alert('Por favor ingresa la API Key.');
+  API_KEY = key;
+  ADMIN_USER = user;
+  localStorage.setItem('odoo_api_key', key);
+  localStorage.setItem('odoo_admin_user', user);
+  document.getElementById('config-section').style.display = 'none';
+  showAlert('global-alert', '✅ Configuración guardada correctamente.', 'success');
+}
+
+// ─── ODOO RPC ─────────────────────────────────────────
+async function odooCall(model, method, args, kwargs = {}) {
+  const res = await fetch(`${ODOO_URL}/web/dataset/call_kw`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Basic ${btoa(ADMIN_USER + ':' + API_KEY)}`,
+    },
+    body: JSON.stringify({
+      jsonrpc: '2.0', method: 'call', id: 1,
+      params: { model, method, args, kwargs }
+    })
+  });
+  const data = await res.json();
+  if (data.error) throw new Error(data.error.data?.message || data.error.message);
+  return data.result;
+}
+
+// ─── LOGIN ────────────────────────────────────────────
+async function login() {
+  const email = document.getElementById('login-email').value.trim();
+  if (!email) return showAlert('login-alert', 'Por favor ingresa tu correo.', 'error');
+  if (!API_KEY) return showAlert('login-alert', 'El administrador debe configurar la API Key primero.', 'error');
+
+  const btn = document.getElementById('login-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Buscando...';
+
+  try {
+    // Find employee by work email
+    const employees = await odooCall('hr.employee', 'search_read',
+      [[['work_email', '=', email]]],
+      { fields: ['id', 'name', 'job_title', 'image_128', 'department_id'], limit: 1 }
+    );
+
+    if (!employees || employees.length === 0) {
+      // Try with private email via partner
+      const partners = await odooCall('res.partner', 'search_read',
+        [[['email', '=', email]]],
+        { fields: ['id', 'name'], limit: 1 }
+      );
+      if (!partners || partners.length === 0) {
+        showAlert('login-alert', 'No se encontró ningún empleado con ese correo. Verifica e intenta de nuevo.', 'error');
+        return;
+      }
+      showAlert('login-alert', 'Correo encontrado pero no vinculado a un empleado activo. Contacta a TI.', 'error');
+      return;
+    }
+
+    currentEmployee = employees[0];
+    document.getElementById('emp-name').textContent = currentEmployee.name;
+    document.getElementById('emp-job').textContent = currentEmployee.job_title || (currentEmployee.department_id ? currentEmployee.department_id[1] : 'Empleado');
+
+    const avatarEl = document.getElementById('emp-avatar');
+    if (currentEmployee.image_128) {
+      avatarEl.innerHTML = `<img src="data:image/png;base64,${currentEmployee.image_128}">`;
+    } else {
+      avatarEl.textContent = currentEmployee.name.charAt(0).toUpperCase();
+    }
+
+    await loadEquipment();
+
+    document.getElementById('login-section').classList.add('hidden');
+    document.getElementById('main-content').classList.remove('hidden');
+
+  } catch (e) {
+    showAlert('login-alert', 'Error al conectar con Odoo: ' + e.message, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = 'Continuar';
+  }
+}
+
+// ─── LOAD EQUIPMENT ───────────────────────────────────
+async function loadEquipment() {
+  const equipment = await odooCall('maintenance.equipment', 'search_read',
+    [[['employee_id', '=', currentEmployee.id]]],
+    { fields: ['id', 'name', 'category_id', 'serial_no', 'image_1920'] }
+  );
+
+  equipmentData = equipment || [];
+  renderEquipment();
+}
+
+function renderEquipment() {
+  const list = document.getElementById('equipment-list');
+
+  if (equipmentData.length === 0) {
+    list.innerHTML = `
+      <div class="empty-state">
+        <div class="icon">📭</div>
+        <h3>Sin equipos asignados</h3>
+        <p>No tienes equipos registrados. Contacta al área de TI si crees que esto es un error.</p>
+      </div>`;
+    document.getElementById('progress-wrap').style.display = 'none';
+    return;
+  }
+
+  // Group by category
+  const byCategory = {};
+  equipmentData.forEach(eq => {
+    const cat = eq.category_id ? eq.category_id[1] : 'Sin categoría';
+    if (!byCategory[cat]) byCategory[cat] = [];
+    byCategory[cat].push(eq);
+  });
+
+  list.innerHTML = '';
+
+  Object.entries(byCategory).forEach(([cat, items]) => {
+    const section = document.createElement('div');
+    section.style.marginBottom = '32px';
+    section.innerHTML = `<p class="section-title">${getIcon(cat)} ${cat}</p>`;
+
+    items.forEach(eq => {
+      const hasPhoto = !!eq.image_1920;
+      const card = document.createElement('div');
+      card.className = `equipment-card${hasPhoto ? ' uploaded' : ''}`;
+      card.id = `card-${eq.id}`;
+      card.innerHTML = `
+        <div class="card-header">
+          <div class="category-icon">${getIcon(cat)}</div>
+          <div class="card-header-text">
+            <h3>${eq.name}</h3>
+            <p>${eq.serial_no ? 'Serie: ' + eq.serial_no : 'Sin número de serie registrado'}</p>
+          </div>
+          <span class="status-badge ${hasPhoto ? 'status-done' : 'status-pending'}" id="badge-${eq.id}">
+            ${hasPhoto ? '✓ Foto subida' : 'Pendiente'}
+          </span>
+        </div>
+
+        ${hasPhoto ? `<img src="data:image/jpeg;base64,${eq.image_1920}" style="width:100%;max-height:180px;object-fit:cover;border-radius:8px;margin-bottom:12px;">` : ''}
+
+        <div class="upload-area ${hasPhoto ? 'has-file' : ''}" id="upload-area-${eq.id}">
+          <input type="file" accept="image/*" onchange="handleFile(${eq.id}, this)">
+          <div class="upload-icon">${hasPhoto ? '✅' : '📸'}</div>
+          <p>${hasPhoto ? 'Haz clic para reemplazar la foto' : 'Haz clic o arrastra una foto aquí'}</p>
+          <p class="file-name" id="file-name-${eq.id}"></p>
+          <img class="preview-img" id="preview-${eq.id}">
+        </div>
+
+        <div class="card-actions">
+          <button class="btn" id="upload-btn-${eq.id}" onclick="uploadPhoto(${eq.id})" style="display:none;">
+            Guardar foto
+          </button>
+        </div>
+        <div id="alert-${eq.id}" class="alert"></div>
+      `;
+      section.appendChild(card);
+    });
+
+    list.appendChild(section);
+  });
+
+  updateProgress();
+}
+
+// ─── FILE HANDLING ────────────────────────────────────
+function handleFile(eqId, input) {
+  const file = input.files[0];
+  if (!file) return;
+
+  const area = document.getElementById(`upload-area-${eqId}`);
+  const nameEl = document.getElementById(`file-name-${eqId}`);
+  const preview = document.getElementById(`preview-${eqId}`);
+  const btn = document.getElementById(`upload-btn-${eqId}`);
+
+  nameEl.textContent = file.name;
+  area.classList.add('has-file');
+
+  const reader = new FileReader();
+  reader.onload = e => {
+    preview.src = e.target.result;
+    preview.style.display = 'block';
+  };
+  reader.readAsDataURL(file);
+
+  btn.style.display = 'inline-flex';
+}
+
+// ─── UPLOAD PHOTO ─────────────────────────────────────
+async function uploadPhoto(eqId) {
+  const card = document.getElementById(`card-${eqId}`);
+  const fileInput = card.querySelector('input[type="file"]');
+  const btn = document.getElementById(`upload-btn-${eqId}`);
+
+  if (!fileInput.files[0]) return;
+
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Guardando...';
+
+  const file = fileInput.files[0];
+
+  try {
+    const base64 = await fileToBase64(file);
+
+    // Update maintenance.equipment image
+    await odooCall('maintenance.equipment', 'write',
+      [[eqId], { image_1920: base64 }], {}
+    );
+
+    // Now update the hr.employee equipment audit field (work_contact_id photo or equipment image)
+    // Find the employee's equipment record and update it
+    showCardAlert(eqId, '✅ Foto guardada correctamente en Odoo.', 'success');
+
+    // Update local data
+    const eq = equipmentData.find(e => e.id === eqId);
+    if (eq) eq.image_1920 = base64;
+
+    // Update card UI
+    card.classList.add('uploaded');
+    const badge = document.getElementById(`badge-${eqId}`);
+    badge.className = 'status-badge status-done';
+    badge.textContent = '✓ Foto subida';
+    btn.style.display = 'none';
+
+    updateProgress();
+
+  } catch (e) {
+    showCardAlert(eqId, 'Error al guardar: ' + e.message, 'error');
+    btn.disabled = false;
+    btn.innerHTML = 'Guardar foto';
+  }
+}
+
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const base64 = reader.result.split(',')[1];
+      resolve(base64);
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+// ─── PROGRESS ─────────────────────────────────────────
+function updateProgress() {
+  const total = equipmentData.length;
+  const done = equipmentData.filter(e => !!e.image_1920).length;
+  const pct = total > 0 ? (done / total) * 100 : 0;
+
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-count').textContent = `${done} / ${total}`;
+}
+
+// ─── ALERTS ───────────────────────────────────────────
+function showAlert(id, msg, type) {
+  const el = document.getElementById(id);
+  el.textContent = msg;
+  el.className = `alert alert-${type} show`;
+  setTimeout(() => el.classList.remove('show'), 5000);
+}
+
+function showCardAlert(eqId, msg, type) {
+  showAlert(`alert-${eqId}`, msg, type);
+}
+
+// Enter key on email
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('login-email')?.addEventListener('keydown', e => {
+    if (e.key === 'Enter') login();
+  });
+});
+</script>
+</body>
+</html>
