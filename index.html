@@ -579,7 +579,7 @@ function saveConfig() {
 
 // ─── ODOO RPC ─────────────────────────────────────────
 async function odooCall(model, method, args, kwargs = {}) {
-  const res = await fetch(`${ODOO_URL}/web/dataset/call_kw`, {
+  const res = await fetch(`${ODOO_URL}/web/dataset/call_kw/${model}/${method}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -587,7 +587,7 @@ async function odooCall(model, method, args, kwargs = {}) {
     },
     body: JSON.stringify({
       jsonrpc: '2.0', method: 'call', id: 1,
-      params: { model, method, args, kwargs }
+      params: { model, method, args, kwargs: { ...kwargs, context: {} } }
     })
   });
   const data = await res.json();
