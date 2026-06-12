@@ -17,6 +17,8 @@
   .logo { font-size: 20px; font-weight: 700; color: var(--accent2); letter-spacing: -0.5px; }
   .logo span { color: var(--text); }
   header p { font-size: 13px; color: var(--muted); margin-left: auto; }
+  .btn-logout { background: transparent; border: 1px solid var(--border); color: var(--muted); border-radius: 8px; padding: 8px 16px; font-size: 13px; font-weight: 500; cursor: pointer; font-family: inherit; transition: border-color 0.2s, color 0.2s; display: none; }
+  .btn-logout:hover { border-color: var(--error); color: var(--error); }
   .container { max-width: 780px; margin: 0 auto; padding: 40px 24px 80px; }
   .hero { margin-bottom: 40px; }
   .hero h1 { font-size: 28px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 8px; }
@@ -81,6 +83,7 @@
 <header>
   <div class="logo">inter<span>sel</span></div>
   <p>Sistema de Auditoría de Equipos</p>
+  <button class="btn-logout" id="logout-btn" onclick="logout()">Cerrar sesión</button>
 </header>
 <div class="container">
   <div class="hero">
@@ -266,6 +269,7 @@ async function login() {
     await loadEquipment();
     document.getElementById('login-section').classList.add('hidden');
     document.getElementById('main-content').classList.remove('hidden');
+    document.getElementById('logout-btn').style.display = 'inline-flex';
 
   } catch(e) {
     showAlert('login-alert', 'Error: ' + e.message, 'error');
@@ -414,6 +418,15 @@ function showAlert(id, msg, type) {
 }
 
 function showCardAlert(eqId, msg, type) { showAlert(`alert-${eqId}`, msg, type); }
+
+function logout() {
+  currentEmployee = null;
+  equipmentData = [];
+  document.getElementById('main-content').classList.add('hidden');
+  document.getElementById('login-section').classList.remove('hidden');
+  document.getElementById('login-email').value = '';
+  document.getElementById('logout-btn').style.display = 'none';
+}
 
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('login-email')?.addEventListener('keydown', e => { if (e.key === 'Enter') login(); });
