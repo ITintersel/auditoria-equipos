@@ -279,7 +279,7 @@ async function login() {
 async function loadEquipment() {
   const equipment = await odooCall('maintenance.equipment', 'search_read',
     [[['employee_id', '=', currentEmployee.id]]],
-    { fields: ['id', 'name', 'category_id', 'serial_no', 'image_1920'] }
+    { fields: ['id', 'name', 'category_id', 'serial_no'] }
   );
   equipmentData = equipment || [];
   renderEquipment();
